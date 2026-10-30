@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSC Physics Interactive MCQ Model Test</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Hind Siliguri for elegant Bangla typography) -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+        .custom-radio:checked + label {
+            border-color: #8b5cf6;
+            background-color: rgba(139, 92, 246, 0.2);
+            color: #ffffff;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4c1d95;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6d28d9;
+        }
+        /* Print styles for solution sheet */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            header, footer, #loginSection, #quizSection, .no-print {
+                display: none !important;
+            }
+            #resultSection {
+                display: block !important;
+            }
+            .glass-card {
+                background: #ffffff !important;
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+                color: #000000 !important;
+            }
+            .text-white, .text-slate-300, .text-slate-400 {
+                color: #000000 !important;
+            }
+            .border-slate-700, .border-slate-800 {
+                border-color: #ddd !important;
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="w-full glass-card border-b border-slate-700/50 sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    <i class="fa-solid fa-atom"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-300">ভৌত আলোকবিজ্ঞান MCQ [P-46]</h1>
+                    <p class="text-xs text-slate-400">HSC Physics Special Exam (30 Questions)</p>
+                </div>
+            </div>
+            <div id="userInfoHeader" class="hidden text-right">
+                <span id="userRollDisplay" class="text-xs bg-purple-900/80 border border-purple-500/40 text-purple-200 px-3 py-1.5 rounded-full font-mono font-bold"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-4xl">
+
+        <!-- STEP 1: LOGIN SECTION -->
+        <div id="loginSection" class="glass-card rounded-3xl p-6 md:p-10 max-w-md mx-auto my-12 text-center space-y-6 transition-all duration-500">
+            <div class="w-20 h-20 bg-purple-600/20 text-purple-400 rounded-full flex items-center justify-center mx-auto text-3xl border border-purple-500/30 shadow-inner">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold text-white mb-2">পরীক্ষার্থী প্রবেশদ্বার</h2>
+                <p class="text-slate-300 text-sm">পরীক্ষা শুরু করতে তোমার ৫ অক্ষরের রোল নম্বর প্রবেশ করাও।</p>
+            </div>
+
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1 ml-1 uppercase tracking-wider">রোল নম্বর (৫ সংখ্যা)</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="rollInput" maxlength="5" placeholder="" class="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 font-mono transition-all">
+                    </div>
+                </div>
+                <div id="loginError" class="hidden text-red-400 text-xs bg-red-950/50 border border-red-800/50 rounded-lg p-2.5 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span id="loginErrorText">দয়া করে ৫ অক্ষরের সঠিক রোল নম্বর দাও।</span>
+                </div>
+                <button id="startBtn" onclick="handleLogin()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-purple-900/40 transition-all duration-300 flex items-center justify-center gap-2 group">
+                    <span>পরীক্ষা শুরু করো</span>
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 2: QUIZ SECTION -->
+        <div id="quizSection" class="hidden space-y-6">
+            <!-- Timer & Progress Bar -->
+            <div class="glass-card rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <div class="text-purple-400 text-xl">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div class="w-full md:w-64">
+                        <div class="flex justify-between text-xs text-slate-300 mb-1">
+                            <span>উত্তর দেওয়া হয়েছে: <strong id="answeredCount" class="text-purple-300 font-bold">০</strong> / ৩০</span>
+                            <span id="progressPercent" class="font-mono text-purple-400">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-slate-700/50">
+                            <div id="progressBar" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-900/90 border border-amber-500/30 px-4 py-2 rounded-xl text-amber-400 font-mono font-bold">
+                    <i class="fa-regular fa-clock animate-pulse"></i>
+                    <span id="timerDisplay">30:00</span>
+                </div>
+            </div>
+
+            <!-- Question Form List -->
+            <form id="quizForm" class="space-y-6">
+                <div id="questionsContainer" class="space-y-6">
+                    <!-- 30 Questions dynamically injected -->
+                </div>
+
+                <!-- Submit Button Container -->
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <button type="button" onclick="confirmSubmission()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-lg px-8 py-3.5 rounded-xl shadow-xl shadow-emerald-900/30 transition-all duration-300 flex items-center justify-center gap-2 mx-auto">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>পরীক্ষা জমা দাও (Submit Exam)</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- STEP 3: RESULT & REVIEW SECTION -->
+        <div id="resultSection" class="hidden space-y-6">
+            <!-- Summary Banner -->
+            <div class="glass-card rounded-3xl p-6 md:p-8 text-center space-y-6 relative overflow-hidden">
+                <div class="absolute -top-10 -left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div class="inline-flex p-3 bg-purple-900/40 border border-purple-500/30 rounded-2xl text-purple-300 mb-1">
+                    <i class="fa-solid fa-award text-4xl"></i>
+                </div>
+
+                <div>
+                    <h2 class="text-3xl font-bold text-white">পরীক্ষার ফলাফল</h2>
+                    <p id="resultRollText" class="text-purple-300 text-sm mt-1 font-mono font-semibold"></p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                    <div class="bg-slate-900/80 border border-slate-700/60 p-4 rounded-2xl">
+                        <span class="block text-xs text-slate-400 mb-1">প্রাপ্ত নম্বর</span>
+                        <span id="scoreDisplay" class="text-2xl font-extrabold text-purple-400 font-mono">0 / 30</span>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-700/60 p-4 rounded-2xl">
+                        <span class="block text-xs text-slate-400 mb-1">সঠিক উত্তর</span>
+                        <span id="correctDisplay" class="text-2xl font-extrabold text-emerald-400 font-mono">0</span>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-700/60 p-4 rounded-2xl">
+                        <span class="block text-xs text-slate-400 mb-1">ভুল উত্তর</span>
+                        <span id="wrongDisplay" class="text-2xl font-extrabold text-rose-400 font-mono">0</span>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-700/60 p-4 rounded-2xl">
+                        <span class="block text-xs text-slate-400 mb-1">পার্সেন্টেজ</span>
+                        <span id="percentDisplay" class="text-2xl font-extrabold text-indigo-400 font-mono">0%</span>
+                    </div>
+                </div>
+
+                <!-- Solve Sheet Download Button -->
+                <div class="pt-2 flex flex-wrap gap-4 justify-center no-print">
+                    <button onclick="downloadSolveSheet()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-950/50 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf text-lg"></i>
+                        <span>সলভ শিট ডাউনলোড / প্রিন্ট করো</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detailed Answer Review Section -->
+            <div class="glass-card rounded-3xl p-6 md:p-8 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-700/80 pb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-square-poll-vertical text-purple-400"></i>
+                        <span>বিস্তারিত প্রশ্ন সমাধান (Solve Sheet)</span>
+                    </h3>
+                    <span class="text-xs text-slate-400 no-print">৩০টি প্রশ্নের সঠিক উত্তর ও ব্যাখ্যা</span>
+                </div>
+
+                <div id="solutionsContainer" class="space-y-6">
+                    <!-- Solution cards will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 no-print">
+        <div class="glass-card rounded-2xl max-w-md w-full p-6 text-center space-y-5 border border-purple-500/30">
+            <div class="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-white">তুমি কি নিশ্চিত?</h3>
+                <p id="modalAnswerText" class="text-slate-300 text-sm mt-1"></p>
+            </div>
+            <div class="flex gap-3 justify-center pt-2">
+                <button onclick="closeConfirmModal()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold border border-slate-700 transition-all">
+                    ফিরে যাও
+                </button>
+                <button onclick="submitExam()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-bold shadow-lg shadow-emerald-900/30 transition-all">
+                    হ্যাঁ, সাবমিট করো
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-4 text-xs text-slate-500 border-t border-slate-800/60 mt-auto no-print">
+        <p>HSC Physics - Physical Optics [P-46] </p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // 30 Verified & Unique Questions from user image sources
+        const questionsData = [
+            {
+                id: 1,
+                question: "কোনটি তড়িৎ চৌম্বকীয় তরঙ্গ নয়?",
+                options: ["দৃশ্যমান আলো", "X-রশ্মি", "গামা রশ্মি", "আলফা রশ্মি"],
+                correct: 3,
+                explanation: "আলফা রশ্মি হলো দ্বাধনাত্মক চার্জযুক্ত হিলিয়াম নিউক্লিয়াসের স্রোত (কণা), এটি তড়িৎ চৌম্বকীয় তরঙ্গ নয়। বাকি সবগুলো তড়িৎ চৌম্বকীয় তরঙ্গ।"
+            },
+            {
+                id: 2,
+                question: "অন্ধকারে ছবি তুলতে বা নাইট গগলে ব্যবহৃত রশ্মি কোনটি?",
+                options: ["অতিবেগুনি রশ্মি", "অবলোহিত রশ্মি", "গামা রশ্মি", "মাইক্রোওয়েভ"],
+                correct: 1,
+                explanation: "অবলোহিত রশ্মি (Infrared rays) তাপীয় বিকিরণ তৈরি করে এবং অন্ধকারে নাইট ভিশন গগলস ও ক্যামেরায় ব্যবহৃত হয়।"
+            },
+            {
+                id: 3,
+                question: "বেতার তরঙ্গের তরঙ্গদৈর্ঘ্যের পাল্লা কোনটি?",
+                options: ["10⁻⁴ m থেকে 5 × 10⁴ m", "5 × 10⁻⁴ m থেকে 10⁴ m", "10⁻³ m থেকে 4 × 10⁻⁷ m", "5 × 10⁻³ m থেকে 10⁻⁷ m"],
+                correct: 0,
+                explanation: "তড়িৎ চৌম্বকীয় বর্ণালীতে বেতার তরঙ্গের তরঙ্গদৈর্ঘ্যের বিস্তার 10⁻⁴ m থেকে 5 × 10⁴ m পর্যন্ত।"
+            },
+            {
+                id: 4,
+                question: "মাইক্রোওয়েভ নিচের কোন যন্ত্রে ব্যবহৃত হয়?",
+                options: ["রাডারে", "পেরিস্কোপে", "মাইক্রোস্কোপে", "টেলিস্কোপে"],
+                correct: 0,
+                explanation: "মাইক্রোওয়েভ উচ্চ কম্পাঙ্কের তরঙ্গ যা রাডার (RADAR) প্রযুক্তিতে দূরত্ব ও দিক নির্ণয়ে ব্যবহৃত হয়।"
+            },
+            {
+                id: 5,
+                question: "টাকার জলছাপের সঠিকতা নিরূপণে কোন রশ্মি ব্যবহার হয়?",
+                options: ["এক্স রশ্মি", "অতিবেগুনি রশ্মি", "গামা রশ্মি", "বিটা রশ্মি"],
+                correct: 1,
+                explanation: "জাল নোট ও পাসপোর্ট শনাক্তকরণে এবং জলছাপ দেখতে অতিবেগুনি (UV) রশ্মি ব্যবহৃত হয়।"
+            },
+            {
+                id: 6,
+                question: "শল্য চিকিৎসায় যন্ত্রপাতি জীবাণুমুক্ত করতে ব্যবহৃত হয়—",
+                options: ["এক্স রশ্মি", "গামা রশ্মি", "অতিবেগুনি রশ্মি", "অবলোহিত রশ্মি"],
+                correct: 2,
+                explanation: "অতিবেগুনি (UV) রশ্মির জীবাণু ধ্বংস করার উচ্চ ক্ষমতা রয়েছে, যা শল্য চিকিৎসায় সরঞ্জাম জীবাণুমুক্ত করতে ব্যবহৃত হয়।"
+            },
+            {
+                id: 7,
+                question: "মাধ্যমের পরিবর্তন হলে আলোর কোন বৈশিষ্ট্যের পরিবর্তন ঘটে?",
+                options: ["কম্পাঙ্ক", "বর্ণ", "তরঙ্গদৈর্ঘ্য", "কোনোটিই না"],
+                correct: 2,
+                explanation: "উৎস অপরিবর্তিত থাকায় কম্পাঙ্ক অপরিবর্তিত থাকে, কিন্তু মাধ্যম পরিবর্তনে আলোর বেগ ও তরঙ্গদৈর্ঘ্য পরিবর্তিত হয়।"
+            },
+            {
+                id: 8,
+                question: "নিচের কোনটি মূলবর্ণ (Primary Color)?",
+                options: ["আসমানী", "সবুজ", "বাদামী", "হলুদ"],
+                correct: 1,
+                explanation: "মূলবর্ণ ৩টি: লাল, সবুজ ও নীল। অপশনগুলোর মধ্যে 'সবুজ' হলো মূলবর্ণ।"
+            },
+            {
+                id: 9,
+                question: "দৃশ্যমান আলোর তরঙ্গদৈর্ঘ্যের পাল্লা কোনটি?",
+                options: ["100 nm হতে 300 nm", "400 nm হতে 780 nm", "1000 nm হতে 1200 nm", "5000 nm হতে 10,000 nm"],
+                correct: 1,
+                explanation: "মানুষের চোখে দৃশ্যমান আলোর তরঙ্গদৈর্ঘ্য সাধারণত 380 nm থেকে 780 nm বা প্রায় 400 nm - 780 nm।"
+            },
+            {
+                id: 10,
+                question: "দৃশ্যমান বর্ণালীর তরঙ্গদৈর্ঘ্যের বিস্তৃতি অ্যাংস্ট্রমে (Å) কত?",
+                options: ["2000 Å হতে 4000 Å", "4000 Å হতে 8000 Å", "8000 Å হতে 14000 Å", "14000 Å হতে 22000 Å"],
+                correct: 1,
+                explanation: "1 nm = 10 Å, সুতরাং 400 nm - 800 nm সমান 4000 Å - 8000 Å।"
+            },
+            {
+                id: 11,
+                question: "লাল (R), হলুদ (Y) ও বেগুনি (V) বর্ণের তরঙ্গদৈর্ঘ্যের সঠিক ক্রম কোনটি?",
+                options: ["λ_R > λ_Y > λ_V", "λ_R < λ_Y < λ_V", "λ_V > λ_R < λ_V", "λ_Y > λ_R < λ_V"],
+                correct: 0,
+                explanation: "বেনীআসহকলা অনু্যায়ী লালের তরঙ্গদৈর্ঘ্য সবচেয়ে বেশি, তারপর হলুদ এবং বেগুনির তরঙ্গদৈর্ঘ্য সবচেয়ে কম।"
+            },
+            {
+                id: 12,
+                question: "হলুদ (y), কমলা (o) ও লাল (r) আলোর কম্পাঙ্কের সঠিক ক্রম কোনটি?",
+                options: ["ν_r > ν_o > ν_y", "ν_y > ν_o > ν_r", "ν_o > ν_y > ν_r", "ν_o > ν_r > ν_y"],
+                correct: 1,
+                explanation: "তরঙ্গদৈর্ঘ্য যার বেশি তার কম্পাঙ্ক কম (ν = c/λ)। তরঙ্গদৈর্ঘ্য λ_r > λ_o > λ_y হওয়ায় কম্পাঙ্ক ν_y > ν_o > ν_r।"
+            },
+            {
+                id: 13,
+                question: "লাল, কমলা, সবুজ ও বেগুনির ক্ষেত্রে প্রতিসরাঙ্কের (μ) সঠিক ক্রম কোনটি?",
+                options: ["μ_R > μ_V > μ_G > μ_O", "μ_R < μ_V < μ_G < μ_O", "μ_R > μ_O > μ_G > μ_V", "μ_R < μ_O < μ_G < μ_V"],
+                correct: 3,
+                explanation: "কোশীর সূত্রানুসারে প্রতিসরাঙ্ক তরঙ্গদৈর্ঘ্যের ব্যস্তানুপাতিক। তাই বেগুনির (V) প্রতিসরাঙ্ক সর্বাধিক এবং লালের (R) সবচেয়ে কম।"
+            },
+            {
+                id: 14,
+                question: "বেগুনি (v), নীল (b) ও হলুদ (y) আলোর কম্পাঙ্কের সম্পর্ক কোনটি?",
+                options: ["ν_v > ν_b > ν_y", "ν_y > ν_b > ν_v", "ν_v > ν_y > ν_b", "ν_b > ν_v > ν_y"],
+                correct: 0,
+                explanation: "কম্পাঙ্কের ক্রম: বেগুনি > নীল > হলুদ।"
+            },
+            {
+                id: 15,
+                question: "দৃশ্যমান বর্ণালীর ক্ষেত্রে 'মধ্যম রশ্মি' (Mean Ray) বলা হয় কোনটিকে?",
+                options: ["হলুদ", "লাল", "নীল", "সবুজ"],
+                correct: 0,
+                explanation: "দৃশ্যমান বর্ণালীর ঠিক মাঝামাঝি গড় তরঙ্গদৈর্ঘ্য হলুদ আলোর হওয়ায় একে মধ্যম রশ্মি বলা হয়।"
+            },
+            {
+                id: 16,
+                question: "সোডিয়াম আলোর তরঙ্গদৈর্ঘ্য কত?",
+                options: ["5300 Å", "5500 Å", "5800 Å", "6500 Å"],
+                correct: 2,
+                explanation: "সোডিয়াম আলো হলুদ বর্ণের এবং এর গড় তরঙ্গদৈর্ঘ্য প্রায় 5890 Å বা সংক্ষেপে 5800 Å ধরা হয়।"
+            },
+            {
+                id: 17,
+                question: "নিচের কোন তরঙ্গের তরঙ্গদৈর্ঘ্য সবচেয়ে বেশি?",
+                options: ["অবলোহিত রশ্মি", "বেতার তরঙ্গ", "দৃশ্যমান বিকিরণ", "অতিবেগুনি রশ্মি"],
+                correct: 1,
+                explanation: "তড়িৎ চৌম্বকীয় বর্ণালীর মধ্যে বেতার তরঙ্গের (Radio waves) তরঙ্গদৈর্ঘ্য সবচেয়ে দীর্ঘ।"
+            },
+            {
+                id: 18,
+                question: "নিচের কোনটির তরঙ্গদৈর্ঘ্য সর্বাপেক্ষা কম?",
+                options: ["অতিবেগুনি রশ্মি", "এক্স-রে", "গামা রশ্মি", "অবলোহিত রশ্মি"],
+                correct: 2,
+                explanation: "গামা রশ্মির শক্তি সর্বাধিক এবং তরঙ্গদৈর্ঘ্য সবচেয়ে কম।"
+            },
+            {
+                id: 19,
+                question: "নিচের কোনটির কম্পাঙ্ক সর্বাপেক্ষা কম?",
+                options: ["অতিবেগুনি রশ্মি", "অবলোহিত রশ্মি", "এক্স-রে", "গামা রশ্মি"],
+                correct: 1,
+                explanation: "প্রদত্ত বিকল্পগুলোর মধ্যে অবলোহিত (IR) রশ্মির তরঙ্গদৈর্ঘ্য বেশি হওয়ায় এর কম্পাঙ্ক সবচেয়ে কম।"
+            },
+            {
+                id: 20,
+                question: "নিচের কোন তরঙ্গের কম্পাঙ্ক সর্বাধিক?",
+                options: ["X-রশ্মি", "গামা-রশ্মি", "অবলোহিত রশ্মি", "অতিবেগুনি রশ্মি"],
+                correct: 1,
+                explanation: "গামা রশ্মির কম্পাঙ্ক তড়িৎ চৌম্বকীয় বর্ণালীতে সর্বোচ্চ।"
+            },
+            {
+                id: 21,
+                question: "আলোর প্রতিফলন এবং প্রতিসরণের সূত্র কার নীতি দিয়ে প্রমাণ করা যায়?",
+                options: ["হাইগেনসের নীতি", "দ্বিচিড় পরীক্ষা", "গ্রেটিং পরীক্ষা", "প্রিজম তত্ত্ব"],
+                correct: 0,
+                explanation: "হাইগেনসের তরঙ্গ তত্ত্ব ও গৌণ তরঙ্গমুক নীতি ব্যবহার করে আলোর প্রতিফলন ও প্রতিসরণের সূত্র প্রতিপাদন করা যায়।"
+            },
+            {
+                id: 22,
+                question: "আলোর তরঙ্গ তত্ত্বের (Wave Theory of Light) প্রবর্তক কে?",
+                options: ["নিউটন", "হাইগেনস", "ম্যাক্সওয়েল", "ম্যাক্স-প্লাঙ্ক"],
+                correct: 1,
+                explanation: "১৬৭৮ সালে ডাচ বিজ্ঞানী ক্রিস্টিয়ান হাইগেনস আলোর তরঙ্গ তত্ত্ব প্রদান করেন।"
+            },
+            {
+                id: 23,
+                question: "নিচের কোনটি দ্বারা আলোর প্রতিফলন ও প্রতিসরণের সূত্র প্রমাণ করা যায় না?",
+                options: ["হাইগেনসের নীতি", "ফার্মাটের নীতি", "নিউটনের কণা তত্ত্ব", "বোরের অনুরূপতার নীতি"],
+                correct: 3,
+                explanation: "বোরের অনুরূপতার নীতি পরমাণুর মডেল সংক্রান্ত, এটি দিয়ে আলোর প্রতিফলন বা প্রতিসরণ ব্যাখ্যা করা যায় না।"
+            },
+            {
+                id: 24,
+                question: "সমসত্ত্ব মাধ্যমে তরঙ্গায়িত সমদশা সম্পন্ন কণাগুলোর সঞ্চারপথকে কী বলে?",
+                options: ["সমতল তরঙ্গ", "তরঙ্গমুখ", "তরঙ্গদৈর্ঘ্য", "তরঙ্গশীর্ষ"],
+                correct: 1,
+                explanation: "কোনো মাধ্যমে একই দশায় কম্পিত কণাগুলোর গতিপথ বা সঞ্চারপথকে তরঙ্গমুখ (Wavefront) বলে।"
+            },
+            {
+                id: 25,
+                question: "নিচের কোনটি তরঙ্গমুখের বৈশিষ্ট্য নয়?",
+                options: ["তরঙ্গমুখের প্রতিটি কণা একই দশায় থাকে", "পাশাপাশি দুটি তরঙ্গমুখের দশা একই থাকে", "তরঙ্গ সবসময় তরঙ্গমুখের লম্বভাবে অগ্রসর হয়", "অভিলম্ব আলোক রশ্মির দিক নির্দেশ করে"],
+                correct: 1,
+                explanation: "পাশাপাশি দুটি তরঙ্গমুখের দশা ভিন্ন হয়, তাই এটি তরঙ্গমুখের বৈশিষ্ট্য নয়।"
+            },
+            {
+                id: 26,
+                question: "একটি তরঙ্গমুখের উপরস্থ যেকোনো দুটি বিন্দুর দশা পার্থক্য কত?",
+                options: ["0°", "90°", "180°", "270°"],
+                correct: 0,
+                explanation: "যেহেতু তরঙ্গমুখের সকল কণা একই দশায় স্পন্দিত হয়, তাই তাদের মধ্যকার দশা পার্থক্য ০°।"
+            },
+            {
+                id: 27,
+                question: "আপতিত আলোক রশ্মি তার তরঙ্গমুখের সাথে কত ডিগ্রি কোণ তৈরি করে?",
+                options: ["0°", "45°", "90°", "180°"],
+                correct: 2,
+                explanation: "আলোক রশ্মি সর্বদা তরঙ্গমুখের সাথে লম্বভাবে (৯০° কোণে) সঞ্চালিত হয়।"
+            },
+            {
+                id: 28,
+                question: "অবলোহিত রশ্মির চেয়ে বেশি তরঙ্গদৈর্ঘ্য বিশিষ্ট বিকিরণ কোনটি?",
+                options: ["এক্স-রশ্মি", "অতিবেগুনি রশ্মি", "বেতার তরঙ্গ", "দৃশ্যমান আলো"],
+                correct: 2,
+                explanation: "বেতার তরঙ্গের তরঙ্গদৈর্ঘ্য অবলোহিত বিকিরণের চেয়েও অনেক বড়।"
+            },
+            {
+                id: 29,
+                question: "ঘন কুয়াশার মধ্যে স্পষ্ট ছবি তুলতে কোন রশ্মি ব্যবহার করা হয়?",
+                options: ["গামা রশ্মি", "অতিবেগুনি রশ্মি", "এক্স-রশ্মি", "অবলোহিত রশ্মি"],
+                correct: 3,
+                explanation: "অবলোহিত রশ্মি কুয়াশা বা ধোঁয়ার কণা দ্বারা কম বিক্ষেপিত হয়, ফলে কুয়াশার মধ্যেও স্পষ্ট ছবি তোলা যায়।"
+            },
+            {
+                id: 30,
+                question: "সবচেয়ে কম তরঙ্গদৈর্ঘ্যের তড়িৎ চৌম্বকীয় বিকিরণ কোনটি?",
+                options: ["গামা রশ্মি", "এক্স-রে", "অতিবেগুনি রশ্মি", "অবলোহিত রশ্মি"],
+                correct: 0,
+                explanation: "গামা রশ্মির তরঙ্গদৈর্ঘ্য সবচেয়ে ক্ষুদ্র (10⁻¹² m এর কাছাকাছি)।"
+            }
+        ];
+
+        // State Variables
+        let currentRoll = null;
+        let userAnswers = {};
+        let timerInterval = null;
+        let timeRemaining = 30 * 60; // 30 minutes in seconds
+
+        // LocalStorage Key Helper
+        function getStorageKey(roll) {
+            return `hsc_physics_quiz_roll_${roll}`;
+        }
+
+        // Handle Login
+        function handleLogin() {
+            const rollInput = document.getElementById('rollInput');
+            const roll = rollInput.value.trim();
+            const errorDiv = document.getElementById('loginError');
+            const errorText = document.getElementById('loginErrorText');
+
+            if (!roll || roll.length !== 5) {
+                errorText.innerText = "দয়া করে ৫ অক্ষরের রোল নম্বর প্রবেশ করাও (যেমন: 84920)।";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            errorDiv.classList.add('hidden');
+            currentRoll = roll;
+
+            // Check if student already submitted test with this roll
+            const savedData = localStorage.getItem(getStorageKey(roll));
+            if (savedData) {
+                // Show existing result directly
+                const parsed = JSON.parse(savedData);
+                userAnswers = parsed.userAnswers || {};
+                showResultScreen(parsed, true);
+            } else {
+                // Start fresh exam
+                startQuiz();
+            }
+        }
+
+        // Start Quiz
+        function startQuiz() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            document.getElementById('userInfoHeader').classList.remove('hidden');
+            document.getElementById('userRollDisplay').innerText = `রোল: ${currentRoll}`;
+
+            renderQuestions();
+            startTimer();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render 30 Questions
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questionsData.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = "glass-card rounded-2xl p-5 md:p-6 space-y-4 border border-slate-700/60 hover:border-purple-500/40 transition-all";
+                
+                const qNumBangla = convertToBanglaNumber(index + 1);
+
+                questionCard.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <span class="bg-purple-900/80 border border-purple-500/40 text-purple-300 font-bold px-3 py-1 rounded-xl text-sm font-mono mt-0.5 shrink-0">
+                            ${qNumBangla}
+                        </span>
+                        <h3 class="text-lg md:text-xl font-semibold text-white leading-relaxed">
+                            ${q.question}
+                        </h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                        ${q.options.map((opt, optIdx) => {
+                            const optionKey = `q_${q.id}_opt_${optIdx}`;
+                            const optionSymbol = ['ক', 'খ', 'গ', 'ঘ'][optIdx];
+                            return `
+                                <div>
+                                    <input type="radio" id="${optionKey}" name="question_${q.id}" value="${optIdx}" class="hidden custom-radio" onchange="recordAnswer(${q.id}, ${optIdx})">
+                                    <label for="${optionKey}" class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-900/60 border border-slate-700/70 text-slate-300 hover:bg-slate-800/80 hover:text-white cursor-pointer transition-all">
+                                        <span class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-purple-400 font-mono">
+                                            ${optionSymbol}
+                                        </span>
+                                        <span class="text-sm font-medium">${opt}</span>
+                                    </label>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                container.appendChild(questionCard);
+            });
+        }
+
+        // Record User Answer
+        function recordAnswer(questionId, selectedIndex) {
+            userAnswers[questionId] = selectedIndex;
+            updateProgress();
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const percentage = Math.round((answeredCount / questionsData.length) * 100);
+
+            document.getElementById('answeredCount').innerText = convertToBanglaNumber(answeredCount);
+            document.getElementById('progressPercent').innerText = `${percentage}%`;
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+        }
+
+        // Start Countdown Timer
+        function startTimer() {
+            const timerDisplay = document.getElementById('timerDisplay');
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+
+                const minStr = minutes < 10 ? `0${minutes}` : minutes;
+                const secStr = seconds < 10 ? `0${seconds}` : seconds;
+
+                timerDisplay.innerText = `${minStr}:${secStr}`;
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert("সময় শেষ হয়ে গেছে! তোমার পরীক্ষা স্বয়ংক্রিয়ভাবে জমা হয়ে যাচ্ছে।");
+                    submitExam();
+                }
+            }, 1000);
+        }
+
+        // Confirm Modal
+        function confirmSubmission() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const modalText = document.getElementById('modalAnswerText');
+            modalText.innerText = `তুমি ৩০টি প্রশ্নের মধ্যে ${convertToBanglaNumber(answeredCount)}টির উত্তর দিয়েছো। তুমি কি পরীক্ষা সাবমিট করতে চাও?`;
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        // Submit Exam Logic
+        function submitExam() {
+            closeConfirmModal();
+            if (timerInterval) clearInterval(timerInterval);
+
+            // Calculate Score
+            let correctCount = 0;
+            questionsData.forEach(q => {
+                if (userAnswers[q.id] === q.correct) {
+                    correctCount++;
+                }
+            });
+
+            const wrongCount = Object.keys(userAnswers).length - correctCount;
+            const scorePercentage = Math.round((correctCount / questionsData.length) * 100);
+
+            const resultData = {
+                roll: currentRoll,
+                score: correctCount,
+                total: questionsData.length,
+                wrong: wrongCount,
+                percentage: scorePercentage,
+                userAnswers: userAnswers,
+                timestamp: new Date().toLocaleString('bn-BD')
+            };
+
+            // Save to localStorage
+            localStorage.setItem(getStorageKey(currentRoll), JSON.stringify(resultData));
+
+            showResultScreen(resultData, false);
+        }
+
+        // Show Results Screen
+        function showResultScreen(resultData, isAlreadyTaken = false) {
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.remove('hidden');
+            document.getElementById('userInfoHeader').classList.remove('hidden');
+            document.getElementById('userRollDisplay').innerText = `রোল: ${resultData.roll}`;
+
+            document.getElementById('resultRollText').innerText = `রোল নম্বর: ${resultData.roll} ${isAlreadyTaken ? '(তুমি এই রোলে পূর্বে পরীক্ষা দিয়েছো)' : ''}`;
+            document.getElementById('scoreDisplay').innerText = `${convertToBanglaNumber(resultData.score)} / ৩০`;
+            document.getElementById('correctDisplay').innerText = convertToBanglaNumber(resultData.score);
+            document.getElementById('wrongDisplay').innerText = convertToBanglaNumber(resultData.wrong);
+            document.getElementById('percentDisplay').innerText = `${convertToBanglaNumber(resultData.percentage)}%`;
+
+            renderSolutions(resultData.userAnswers);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render Answer Solutions
+        function renderSolutions(answersMap) {
+            const container = document.getElementById('solutionsContainer');
+            container.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const userChoice = answersMap[q.id];
+                const isCorrect = userChoice === q.correct;
+                const isUnanswered = userChoice === undefined;
+
+                const card = document.createElement('div');
+                let statusBg = "border-slate-700 bg-slate-900/60";
+                let statusBadge = "";
+
+                if (isCorrect) {
+                    statusBg = "border-emerald-500/40 bg-emerald-950/20";
+                    statusBadge = `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs px-2.5 py-1 rounded-lg font-bold flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> সঠিক</span>`;
+                } else if (isUnanswered) {
+                    statusBg = "border-amber-500/40 bg-amber-950/20";
+                    statusBadge = `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs px-2.5 py-1 rounded-lg font-bold flex items-center gap-1"><i class="fa-solid fa-circle-minus"></i> উত্তর দেওয়া হয়নি</span>`;
+                } else {
+                    statusBg = "border-rose-500/40 bg-rose-950/20";
+                    statusBadge = `<span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs px-2.5 py-1 rounded-lg font-bold flex items-center gap-1"><i class="fa-solid fa-circle-xmark"></i> ভুল</span>`;
+                }
+
+                const banglaIndex = convertToBanglaNumber(idx + 1);
+
+                card.className = `p-5 rounded-2xl border ${statusBg} space-y-4 transition-all break-inside-avoid`;
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-start gap-3">
+                            <span class="bg-slate-800 border border-slate-700 text-purple-400 font-bold px-3 py-1 rounded-xl text-sm font-mono mt-0.5 shrink-0">
+                                ${banglaIndex}
+                            </span>
+                            <h4 class="text-base md:text-lg font-semibold text-white leading-relaxed">
+                                ${q.question}
+                            </h4>
+                        </div>
+                        <div>${statusBadge}</div>
+                    </div>
+
+                    <!-- Options breakdown -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm pt-1">
+                        ${q.options.map((opt, optI) => {
+                            let optStyle = "bg-slate-900/40 border-slate-800 text-slate-400";
+                            let icon = "";
+
+                            if (optI === q.correct) {
+                                optStyle = "bg-emerald-900/40 border-emerald-500/50 text-emerald-200 font-semibold";
+                                icon = `<i class="fa-solid fa-check text-emerald-400 ml-auto"></i>`;
+                            } else if (optI === userChoice && !isCorrect) {
+                                optStyle = "bg-rose-900/40 border-rose-500/50 text-rose-200 line-through";
+                                icon = `<i class="fa-solid fa-xmark text-rose-400 ml-auto"></i>`;
+                            }
+
+                            const optSymbol = ['ক', 'খ', 'গ', 'ঘ'][optI];
+
+                            return `
+                                <div class="p-3 rounded-xl border ${optStyle} flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-md bg-slate-800 text-xs font-bold flex items-center justify-center font-mono shrink-0">${optSymbol}</span>
+                                    <span>${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- Explanation -->
+                    <div class="mt-2 p-3.5 bg-slate-900/80 border border-purple-500/20 rounded-xl text-xs text-slate-300 space-y-1">
+                        <div class="text-purple-400 font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span>ব্যাখ্যা:</span>
+                        </div>
+                        <p class="leading-relaxed text-slate-300">${q.explanation}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Print / Download Solve Sheet with a clean dedicated window
+        function downloadSolveSheet() {
+            const printWindow = window.open('', '_blank');
+            const scoreText = document.getElementById('scoreDisplay').innerText;
+            const rollText = currentRoll || '';
+
+            let printHTML = `
+                <!DOCTYPE html>
+                <html lang="bn">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>HSC Physics Solve Sheet - Roll ${rollText}</title>
+                    <script src="https://cdn.tailwindcss.com"><\/script>
+                    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+                    <style>
+                        body { font-family: 'Hind Siliguri', sans-serif; padding: 20px; color: #000; background: #fff; }
+                        .question-box { page-break-inside: avoid; border: 1px solid #ccc; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="text-center border-b pb-4 mb-6">
+                        <h1 class="text-2xl font-bold">ভৌত আলোকবিজ্ঞান MCQ Model Test [P-46]</h1>
+                        <p class="text-sm">রোল নম্বর: ${rollText} | প্রাপ্ত নম্বর: ${scoreText}</p>
+                    </div>
+                    <div>
+            `;
+
+            questionsData.forEach((q, idx) => {
+                const userChoice = userAnswers[q.id];
+                const optSymbols = ['ক', 'খ', 'গ', 'ঘ'];
+                
+                printHTML += `
+                    <div class="question-box">
+                        <p class="font-bold text-base mb-2">${convertToBanglaNumber(idx + 1)}. ${q.question}</p>
+                        <div class="grid grid-cols-2 gap-2 text-sm mb-2">
+                            ${q.options.map((opt, i) => {
+                                let style = "padding: 6px; border-radius: 4px; border: 1px solid #ddd;";
+                                if (i === q.correct) {
+                                    style += " background-color: #d1fae5; font-weight: bold; border-color: #10b981;";
+                                } else if (i === userChoice && userChoice !== q.correct) {
+                                    style += " background-color: #fee2e2; border-color: #ef4444;";
+                                }
+                                return `<div style="${style}">${optSymbols[i]}) ${opt}</div>`;
+                            }).join('')}
+                        </div>
+                        <p class="text-xs text-gray-700 bg-gray-100 p-2 rounded"><strong>ব্যাখ্যা:</strong> ${q.explanation}</p>
+                    </div>
+                `;
+            });
+
+            printHTML += `
+                    </div>
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `;
+
+            printWindow.document.write(printHTML);
+            printWindow.document.close();
+        }
+
+        // Helper: Convert English numbers to Bangla numbers
+        function convertToBanglaNumber(num) {
+            const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return num.toString().replace(/\d/g, digit => banglaDigits[digit]);
+        }
+    </script>
+</body>
+</html>
